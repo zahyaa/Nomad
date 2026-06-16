@@ -16,6 +16,7 @@ struct AuthView: View {
     @State private var isCheckingUsername = false
     @State private var isUsernameAvailable: Bool?
     @State private var searchTask: Task<Void, Never>?
+    @State private var validationError: UsernameValidator.ValidationError?
 
     var onComplete: () -> Void
 
@@ -92,10 +93,17 @@ struct AuthView: View {
                         .filter { $0.isLetter || $0.isNumber || $0 == "_" }
                     if cleaned != newValue { username = cleaned }
                     isUsernameAvailable = nil
+                    validationError = UsernameValidator.validate(cleaned)
                 }
 
             HStack(spacing: 6) {
-                if isCheckingUsername {
+                if let validationError {
+                    Image(systemName: "exclamationmark.circle.fill")
+                        .foregroundStyle(.orange)
+                    Text(validationError.errorDescription ?? "Invalid username")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else if isCheckingUsername {
                     ProgressView().controlSize(.small)
                 } else if let available = isUsernameAvailable {
                     Image(systemName: available ? "checkmark.circle.fill" : "xmark.circle.fill")
@@ -115,7 +123,7 @@ struct AuthView: View {
             }
             .buttonStyle(.glassProminent)
             .padding(.horizontal, 40)
-            .disabled(username.count < 3 || isCheckingUsername)
+            .disabled(validationError != nil || isCheckingUsername || username.isEmpty)
             .onChange(of: username) { _, _ in
                 searchTask?.cancel()
                 searchTask = Task { await debouncedCheck() }
@@ -141,7 +149,9 @@ struct AuthView: View {
     private func debouncedCheck() async {
         let snapshot = username
         try? await Task.sleep(nanoseconds: 350_000_000)
-        guard snapshot == username, snapshot.count >= 3 else { return }
+        // Skip the remote check entirely if the name fails client validation —
+        // saves a CloudKit round-trip on names we already know will be rejected.
+        guard snapshot == username, UsernameValidator.isValid(snapshot) else { return }
         isCheckingUsername = true
         defer { isCheckingUsername = false }
         do {

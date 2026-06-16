@@ -15,6 +15,7 @@ struct SettingsView: View {
     @Query private var postcards: [Postcard]
 
     @AppStorage("nomad.onboardingComplete") private var onboardingComplete = false
+    @AppStorage("nomad.cloudKitEnabled") private var cloudKitEnabled = false
 
     @State private var showSignOutConfirm = false
     @State private var showDeleteConfirm = false
@@ -28,6 +29,7 @@ struct SettingsView: View {
             Form {
                 accountSection
                 cameraSection
+                syncSection
                 aboutSection
                 dangerZoneSection
             }
@@ -107,6 +109,29 @@ struct SettingsView: View {
             Text("Camera")
         } footer: {
             Text("Higher quality produces larger file sizes. Medium quality is recommended for most users.")
+        }
+    }
+
+    @ViewBuilder
+    private var syncSection: some View {
+        Section {
+            Toggle("Sync via iCloud", isOn: Binding(
+                get: { cloudKitEnabled },
+                set: { newValue in
+                    cloudKitEnabled = newValue
+                    if newValue {
+                        CloudKitManager.shared.enable()
+                        // Schedule subscription registration so postcards can arrive.
+                        Task { await CloudKitManager.shared.ensureReceiveSubscription() }
+                    } else {
+                        CloudKitManager.shared.disableForTesting()
+                    }
+                }
+            ))
+        } header: {
+            Text("Sync")
+        } footer: {
+            Text("Turn on to send and receive postcards via iCloud. Requires an iCloud account and a deployed CloudKit schema. Leave off to use Nomad fully offline (share to Messages still works).")
         }
     }
 

@@ -218,7 +218,7 @@ final class CloudKitManager {
         record["sentAt"] = postcard.timestamp as CKRecordValue
 
         do {
-            _ = try await database.save(record)
+            _ = try await Self.withRetry { try await self.database.save(record) }
             postcard.senderUsername = sender
         } catch {
             throw CloudKitError.from(error)
@@ -234,7 +234,9 @@ final class CloudKitManager {
         let query = CKQuery(recordType: CKRecordType.postcard, predicate: predicate)
         query.sortDescriptors = [NSSortDescriptor(key: "sentAt", ascending: false)]
         do {
-            let result = try await database.records(matching: query, resultsLimit: 50)
+            let result = try await Self.withRetry {
+                try await self.database.records(matching: query, resultsLimit: 50)
+            }
             return result.matchResults.compactMap { try? $0.1.get() }
         } catch {
             throw CloudKitError.from(error)
@@ -288,6 +290,45 @@ final class CloudKitManager {
             Log.cloudKit.error("Error creating subscription: \(error.localizedDescription, privacy: .public)")
         } catch {
             Log.cloudKit.error("Unexpected error creating subscription: \(String(describing: error), privacy: .public)")
+        }
+    }
+
+    // MARK: - Retry
+
+    /// Runs `operation` and retries on transient CloudKit errors with
+    /// exponential backoff. Caps at 3 attempts. Honors `retryAfterSeconds`
+    /// in the CKError userInfo if the server suggests one.
+    static func withRetry<T>(
+        maxAttempts: Int = 3,
+        baseDelay: TimeInterval = 1.0,
+        operation: () async throws -> T
+    ) async throws -> T {
+        var attempt = 0
+        while true {
+            attempt += 1
+            do {
+                return try await operation()
+            } catch {
+                guard attempt < maxAttempts, Self.isTransient(error) else {
+                    throw error
+                }
+                let suggested = (error as? CKError)?.retryAfterSeconds
+                let delay = suggested ?? baseDelay * pow(2, Double(attempt - 1))
+                Log.cloudKit.info("Retrying CloudKit op after \(delay, privacy: .public)s (attempt \(attempt, privacy: .public)/\(maxAttempts, privacy: .public))")
+                try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+            }
+        }
+    }
+
+    private static func isTransient(_ error: Error) -> Bool {
+        guard let ck = error as? CKError else { return false }
+        switch ck.code {
+        case .networkUnavailable, .networkFailure,
+             .serviceUnavailable, .requestRateLimited,
+             .zoneBusy, .serverResponseLost:
+            return true
+        default:
+            return false
         }
     }
 
