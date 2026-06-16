@@ -5,6 +5,7 @@
 
 import SwiftUI
 import SwiftData
+import os
 
 @main
 struct NomadApp: App {
@@ -19,7 +20,7 @@ struct NomadApp: App {
             // Most often this fires when the on-disk schema is incompatible
             // with the current model. Fall back to an in-memory store so the
             // app still launches instead of trapping in `.modelContainer(for:)`.
-            print("⚠️ Falling back to in-memory store: \(error)")
+            Log.storage.error("Falling back to in-memory store: \(error.localizedDescription, privacy: .public)")
             let memoryConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
             do {
                 return try ModelContainer(for: schema, configurations: [memoryConfig])

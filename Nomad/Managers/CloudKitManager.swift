@@ -5,6 +5,7 @@
 
 import CloudKit
 import Foundation
+import os
 import SwiftData
 import UIKit
 
@@ -256,11 +257,11 @@ final class CloudKitManager {
         } catch let error as CKError {
             // Only treat .unknownItem as "not found"; other errors should be logged
             if error.code != .unknownItem {
-                print("⚠️ Error checking subscription: \(error)")
+                Log.cloudKit.error("Error checking subscription: \(error.localizedDescription, privacy: .public)")
                 // Still try to create it below
             }
         } catch {
-            print("⚠️ Unexpected error checking subscription: \(error)")
+            Log.cloudKit.error("Unexpected error checking subscription: \(String(describing: error), privacy: .public)")
         }
 
         // Create the subscription
@@ -284,9 +285,9 @@ final class CloudKitManager {
             if error.code == .serverRecordChanged {
                 return  // Idempotent: someone else created it
             }
-            print("⚠️ Error creating subscription: \(error)")
+            Log.cloudKit.error("Error creating subscription: \(error.localizedDescription, privacy: .public)")
         } catch {
-            print("⚠️ Unexpected error creating subscription: \(error)")
+            Log.cloudKit.error("Unexpected error creating subscription: \(String(describing: error), privacy: .public)")
         }
     }
 

@@ -107,6 +107,8 @@ struct CameraView: View {
                     }
                     .buttonStyle(.glass)
                     .padding(.trailing)
+                    .accessibilityLabel("Switch camera")
+                    .accessibilityHint("Toggles between front and back camera")
                 }
                 Spacer()
                 HStack(alignment: .center) {
@@ -117,6 +119,8 @@ struct CameraView: View {
                             .frame(width: 50, height: 50)
                             .glassEffect(.clear.interactive(), in: Circle())
                     }
+                    .accessibilityLabel("Pick from library")
+                    .accessibilityHint("Choose an existing photo to turn into a postcard")
                     Spacer()
                     captureButton
                     Spacer()
@@ -142,6 +146,7 @@ struct CameraView: View {
                 Circle()
                     .stroke(Color.white, lineWidth: 4)
                     .frame(width: 72, height: 72)
+                    .accessibilityHidden(true)
                 Circle()
                     .fill(Color.white)
                     .frame(width: 58, height: 58)

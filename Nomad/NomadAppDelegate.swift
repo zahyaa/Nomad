@@ -14,6 +14,11 @@ final class NomadAppDelegate: NSObject, UIApplicationDelegate, UNUserNotificatio
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         UNUserNotificationCenter.current().delegate = self
+
+        // Subscribe to MetricKit early so the system has a registered
+        // observer for any diagnostics delivered for the previous launch.
+        MetricsObserver.shared.start()
+
         // Only register for remote notifications if CloudKit is enabled —
         // otherwise we get push entitlement errors in local test builds.
         if UserDefaults.standard.bool(forKey: "nomad.cloudKitEnabled") {

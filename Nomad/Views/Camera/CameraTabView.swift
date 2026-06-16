@@ -7,6 +7,7 @@ import SwiftUI
 import SwiftData
 import UIKit
 import CoreLocation
+import os
 
 struct CameraTabView: View {
     @Environment(\.modelContext) private var modelContext
@@ -55,7 +56,7 @@ struct CameraTabView: View {
                     try? modelContext.save()
                 } catch {
                     // Weather fetch failed, continue without weather data
-                    print("Weather fetch failed: \(error)")
+                    Log.weather.error("Weather fetch failed: \(error.localizedDescription, privacy: .public)")
                 }
             }
         }
@@ -65,7 +66,7 @@ struct CameraTabView: View {
             try modelContext.save()
             path.append(PostcardRoute(postcard: postcard))
         } catch {
-            print("Failed to save postcard: \(error)")
+            Log.storage.error("Failed to save postcard: \(error.localizedDescription, privacy: .public)")
         }
     }
 }

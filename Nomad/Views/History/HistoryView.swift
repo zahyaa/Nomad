@@ -348,6 +348,22 @@ struct PostcardRowView: View {
             Spacer()
         }
         .padding(.vertical, 4)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(accessibilityDescription)
+    }
+
+    private var accessibilityDescription: String {
+        var parts: [String] = ["Postcard from \(postcard.locationName)"]
+        parts.append(postcard.timestamp.formatted(.relative(presentation: .named)))
+        if postcard.status == .sent, let recipient = postcard.recipientUsername {
+            parts.append("sent to \(recipient)")
+        } else if postcard.status == .draft {
+            parts.append("draft")
+        }
+        if postcard.isFavorite {
+            parts.append("favorite")
+        }
+        return parts.joined(separator: ", ")
     }
 
     @ViewBuilder

@@ -39,6 +39,8 @@ struct PostcardComposerView: View {
                         PostcardView(postcard: postcard)
                             .matchedGeometryEffect(id: "postcard", in: sendNamespace)
                             .padding(.horizontal)
+                            .accessibilityElement(children: .ignore)
+                            .accessibilityLabel("Postcard preview from \(postcard.locationName), \(postcard.timestamp.formatted(date: .abbreviated, time: .omitted))\(postcard.message.map { ", message: \($0)" } ?? "")")
                     } else {
                         flyAwayView
                     }

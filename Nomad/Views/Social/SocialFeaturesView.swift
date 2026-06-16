@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import CloudKit
+import os
 
 // MARK: - Public Share Link
 struct ShareableCollectionLink {
@@ -323,7 +324,7 @@ struct ShareCollectionView: View {
                                 do {
                                     shareLink = try await shareManager.createShareLink(for: collection)
                                 } catch {
-                                    print("Failed to create share link: \(error)")
+                                    Log.social.error("Failed to create share link: \(error.localizedDescription, privacy: .public)")
                                 }
                             }
                         } label: {
