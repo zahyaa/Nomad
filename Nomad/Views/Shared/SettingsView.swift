@@ -41,7 +41,7 @@ struct SettingsView: View {
                 }
             }
             .confirmationDialog(
-                "Sign out of Nomad?",
+                "Sign out of Pocket Postcard?",
                 isPresented: $showSignOutConfirm,
                 titleVisibility: .visible
             ) {
@@ -136,7 +136,7 @@ struct SettingsView: View {
         } header: {
             Text("Sync")
         } footer: {
-            Text("Turn on to send and receive postcards via iCloud. Requires an iCloud account and a deployed CloudKit schema. Leave off to use Nomad fully offline (share to Messages still works).")
+            Text("Turn on to send and receive postcards via iCloud. Requires an iCloud account and a deployed CloudKit schema. Leave off to use Pocket Postcard fully offline (share to Messages still works).")
         }
     }
 

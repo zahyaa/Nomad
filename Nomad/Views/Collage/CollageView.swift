@@ -147,7 +147,7 @@ struct CollageView: View {
             }
             .sheet(isPresented: $showShareSheet) {
                 if let image = generatedCollage {
-                    ShareSheet(items: [image, "Created with Nomad"])
+                    ShareSheet(items: [image, "Created with Pocket Postcard"])
                 }
             }
         }

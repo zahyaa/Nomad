@@ -395,7 +395,7 @@ struct YearInReviewShareCard: View {
             }
             .padding()
             
-            Text("Made with Nomad")
+            Text("Made with Pocket Postcard")
                 .font(.caption)
                 .foregroundStyle(.tertiary)
         }

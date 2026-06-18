@@ -205,7 +205,7 @@ struct PostcardComposerView: View {
                 HStack {
                     Image(systemName: "person.crop.circle")
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(postcard.recipientUsername.map { "@\($0)" } ?? "Choose a Nomad")
+                        Text(postcard.recipientUsername.map { "@\($0)" } ?? "Choose a recipient")
                             .foregroundStyle(postcard.recipientUsername == nil ? Color.secondary : Color.primary)
                         if isValidatingRecipient {
                             HStack(spacing: 4) {
@@ -299,7 +299,7 @@ struct PostcardComposerView: View {
                     if isSending {
                         ProgressView().tint(.white)
                     }
-                    Text(isSending ? "Sending…" : "Send via Nomad")
+                    Text(isSending ? "Sending…" : "Send Postcard")
                         .font(.headline)
                 }
                 .frame(maxWidth: .infinity)

@@ -26,7 +26,7 @@ struct AuthView: View {
             Image(systemName: "envelope.fill")
                 .font(.system(size: 56))
                 .foregroundStyle(.tint)
-            Text("Welcome to Nomad")
+            Text("Welcome to Pocket Postcard")
                 .font(.largeTitle.bold())
             Text("Sign in with Apple to send and receive postcards.")
                 .font(.subheadline)

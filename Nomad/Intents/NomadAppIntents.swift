@@ -11,7 +11,7 @@ import SwiftData
 
 // MARK: - Open Camera Intent
 struct OpenCameraIntent: AppIntent {
-    static var title: LocalizedStringResource = "Open Camera in Nomad"
+    static var title: LocalizedStringResource = "Open Camera in Pocket Postcard"
     static var description = IntentDescription("Open the camera to capture a new postcard")
     static var openAppWhenRun: Bool = true
     

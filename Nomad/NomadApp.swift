@@ -90,7 +90,7 @@ private struct StorageUnavailableView: View {
             Text("Storage Unavailable")
                 .font(.title3.weight(.semibold))
 
-            Text("Nomad could not start its local data store. Try reinstalling the app or clearing app data.")
+            Text("Pocket Postcard could not start its local data store. Try reinstalling the app or clearing app data.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)

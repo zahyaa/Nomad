@@ -23,7 +23,7 @@ enum CloudKitError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .recipientNotFound: 
-            return "We couldn't find that Nomad."
+            return "We couldn't find that user."
         case .noRenderedImage: 
             return "Render the postcard before sending."
         case .notAuthenticated: 
