@@ -15,7 +15,7 @@ struct SettingsView: View {
     @Query private var postcards: [Postcard]
 
     @AppStorage("nomad.onboardingComplete") private var onboardingComplete = false
-    @AppStorage("nomad.cloudKitEnabled") private var cloudKitEnabled = false
+    @AppStorage("nomad.cloudKitEnabled") private var cloudKitEnabled = true
 
     @State private var showSignOutConfirm = false
     @State private var showDeleteConfirm = false
@@ -121,8 +121,13 @@ struct SettingsView: View {
                     cloudKitEnabled = newValue
                     if newValue {
                         CloudKitManager.shared.enable()
-                        // Schedule subscription registration so postcards can arrive.
-                        Task { await CloudKitManager.shared.ensureReceiveSubscription() }
+                        // First-time enable: backfill the UserRecord that
+                        // sign-in skipped because Sync was off, then
+                        // register the receive subscription.
+                        Task {
+                            await CloudKitManager.shared.upsertCurrentUserIfNeeded()
+                            await CloudKitManager.shared.ensureReceiveSubscription()
+                        }
                     } else {
                         CloudKitManager.shared.disableForTesting()
                     }

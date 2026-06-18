@@ -118,7 +118,13 @@ final class CloudKitManager {
     private lazy var container: CKContainer = CKContainer.default()
     private lazy var database: CKDatabase = container.publicCloudDatabase
 
-    private init() {}
+    private init() {
+        // Default Sync to ON for fresh installs. Once the user explicitly
+        // toggles it in Settings, the stored value sticks and overrides
+        // this default. `register` only applies when no value has been
+        // set yet, so existing installs keep their last choice.
+        UserDefaults.standard.register(defaults: [Self.enabledKey: true])
+    }
 
     // MARK: - Account / Identity
 
@@ -128,6 +134,35 @@ final class CloudKitManager {
 
     func setCurrentUsername(_ username: String) {
         UserDefaults.standard.set(username, forKey: "nomad.currentUsername")
+    }
+
+    /// Cached during sign-in so we can backfill the UserRecord later if
+    /// the user enables Sync after onboarding finishes.
+    func setPendingAppleUserID(_ appleUserID: String) {
+        UserDefaults.standard.set(appleUserID, forKey: "nomad.pendingAppleUserID")
+    }
+
+    func pendingAppleUserID() -> String? {
+        UserDefaults.standard.string(forKey: "nomad.pendingAppleUserID")
+    }
+
+    /// Idempotent. Upserts the UserRecord using the cached Apple ID +
+    /// current username. Safe to call from the Sync toggle setter or
+    /// any first-CloudKit-action site. No-op when Sync is off.
+    func upsertCurrentUserIfNeeded() async {
+        guard isEnabled,
+              let appleUserID = pendingAppleUserID(),
+              let username = currentUsername(),
+              !username.isEmpty else { return }
+        do {
+            _ = try await upsertUserRecord(
+                appleUserID: appleUserID,
+                username: username,
+                avatar: nil
+            )
+        } catch {
+            Log.cloudKit.error("Backfill upsertUserRecord failed: \(error.localizedDescription, privacy: .public)")
+        }
     }
 
     // MARK: - User Records

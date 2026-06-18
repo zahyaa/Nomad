@@ -183,16 +183,23 @@ struct AuthView: View {
                 isUsernameAvailable = false
                 return
             }
-            _ = try await CloudKitManager.shared.upsertUserRecord(
-                appleUserID: appleUserID,
-                username: username,
-                avatar: nil
-            )
+            // Only round-trip to CloudKit when Sync is enabled. When it
+            // isn't, the user can still finish onboarding locally and
+            // flip "Sync via iCloud" on later — the toggle backfills the
+            // UserRecord via `upsertCurrentUserIfNeeded`.
+            if CloudKitManager.shared.isEnabled {
+                _ = try await CloudKitManager.shared.upsertUserRecord(
+                    appleUserID: appleUserID,
+                    username: username,
+                    avatar: nil
+                )
+                await CloudKitManager.shared.ensureReceiveSubscription()
+            }
             let user = User(id: appleUserID, username: username)
             modelContext.insert(user)
             try? modelContext.save()
             CloudKitManager.shared.setCurrentUsername(username)
-            await CloudKitManager.shared.ensureReceiveSubscription()
+            CloudKitManager.shared.setPendingAppleUserID(appleUserID)
             onComplete()
         } catch {
             self.error = error.localizedDescription
