@@ -413,7 +413,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Nomad/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Nomad;
+				INFOPLIST_KEY_CFBundleDisplayName = "Pocket Postcard";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Nomad needs access to your camera to capture moments for postcards.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Nomad needs your location to stamp your postcards with where you are.";
@@ -454,7 +454,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Nomad/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Nomad;
+				INFOPLIST_KEY_CFBundleDisplayName = "Pocket Postcard";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Nomad needs access to your camera to capture moments for postcards.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Nomad needs your location to stamp your postcards with where you are.";
