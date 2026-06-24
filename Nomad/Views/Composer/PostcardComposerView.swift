@@ -159,6 +159,7 @@ struct PostcardComposerView: View {
                 Text("\(draftMessage.count) / \(maxMessageLength)")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
+                    .accessibilityHidden(true)
             }
         }
         .padding(.horizontal)
@@ -224,6 +225,7 @@ struct PostcardComposerView: View {
                     Image(systemName: "chevron.right")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                        .accessibilityHidden(true)
                 }
                 .padding()
                 .background(.background, in: RoundedRectangle(cornerRadius: 12))

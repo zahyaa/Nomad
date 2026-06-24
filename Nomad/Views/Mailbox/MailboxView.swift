@@ -47,6 +47,7 @@ struct MailboxView: View {
                         Task { await refresh() }
                     } label: {
                         Image(systemName: "arrow.clockwise")
+                            .accessibilityLabel("Refresh mailbox")
                     }
                     .disabled(isRefreshing)
                 }
@@ -77,6 +78,7 @@ struct MailboxView: View {
             Image(systemName: "envelope.open")
                 .font(.system(size: 64))
                 .foregroundStyle(.tertiary)
+                .accessibilityHidden(true)
             Text("No Postcards Yet")
                 .font(.title2.weight(.semibold))
             Text("When friends send you postcards, they'll appear here.")

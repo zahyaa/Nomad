@@ -41,6 +41,7 @@ struct OnboardingView: View {
             Image(systemName: "envelope.fill")
                 .font(.system(size: 80))
                 .foregroundStyle(.white)
+                .accessibilityHidden(true)
             Text("Pocket Postcard")
                 .font(.system(size: 40, weight: .heavy, design: .rounded))
                 .foregroundStyle(.white)
@@ -74,6 +75,7 @@ struct OnboardingView: View {
             Image(systemName: "camera.metering.matrix")
                 .font(.system(size: 64))
                 .foregroundStyle(.white)
+                .accessibilityHidden(true)
             Text("Camera & Location")
                 .font(.title.bold())
                 .foregroundStyle(.white)
@@ -144,6 +146,7 @@ struct OnboardingView: View {
                 .font(.title3)
                 .foregroundStyle(.white)
                 .frame(width: 28)
+                .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.subheadline.weight(.semibold))
@@ -155,5 +158,6 @@ struct OnboardingView: View {
             }
             Spacer()
         }
+        .accessibilityElement(children: .combine)
     }
 }

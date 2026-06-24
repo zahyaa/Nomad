@@ -149,6 +149,15 @@ struct SettingsView: View {
                 Text(versionString)
                     .foregroundStyle(.secondary)
             }
+            Link(destination: URL(string: "https://winglet-space.co/nomad/privacy")!) {
+                HStack {
+                    Text("Privacy Policy")
+                    Spacer()
+                    Image(systemName: "arrow.up.right")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
         } header: {
             Text("About")
         }
@@ -207,9 +216,8 @@ struct SettingsView: View {
 
     private func deleteAccount() {
         // Delete Account: destructive, App Store guideline 5.1.1(v) compliance.
-        // Removes User + every Postcard from the local store and clears
-        // identifying UserDefaults. CloudKit-side cleanup (revoking the
-        // UserRecord) will be added when CloudKit goes live in Sprint 4.
+        // Removes User + every Postcard from the local store, wipes
+        // identifying UserDefaults, and purges the CloudKit UserRecord.
         for user in users {
             modelContext.delete(user)
         }
@@ -218,6 +226,8 @@ struct SettingsView: View {
         }
         try? modelContext.save()
         UserDefaults.standard.removeObject(forKey: "nomad.currentUsername")
+        // Fire-and-forget — failures are logged by CloudKitManager.
+        Task { await CloudKitManager.shared.deleteCurrentUserRecord() }
         onboardingComplete = false
         dismiss()
     }

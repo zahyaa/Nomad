@@ -26,6 +26,7 @@ struct AuthView: View {
             Image(systemName: "envelope.fill")
                 .font(.system(size: 56))
                 .foregroundStyle(.tint)
+                .accessibilityHidden(true)
             Text("Welcome to Pocket Postcard")
                 .font(.largeTitle.bold())
             Text("Sign in with Apple to send and receive postcards.")
@@ -100,6 +101,7 @@ struct AuthView: View {
                 if let validationError {
                     Image(systemName: "exclamationmark.circle.fill")
                         .foregroundStyle(.orange)
+                        .accessibilityHidden(true)
                     Text(validationError.errorDescription ?? "Invalid username")
                         .font(.caption)
                         .foregroundStyle(.secondary)
@@ -108,6 +110,7 @@ struct AuthView: View {
                 } else if let available = isUsernameAvailable {
                     Image(systemName: available ? "checkmark.circle.fill" : "xmark.circle.fill")
                         .foregroundStyle(available ? .green : .red)
+                        .accessibilityHidden(true)
                     Text(available ? "Available" : "Taken")
                         .font(.caption)
                 }

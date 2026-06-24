@@ -328,6 +328,24 @@ final class CloudKitManager {
         }
     }
 
+    // MARK: - Account Deletion
+
+    /// Removes the current user's `UserRecord` from the public CloudKit
+    /// database. Called during account deletion to satisfy App Store
+    /// guideline 5.1.1(v). Treats "record not found" as success (idempotent).
+    func deleteCurrentUserRecord() async {
+        guard isEnabled, let appleUserID = pendingAppleUserID() else { return }
+        let recordID = CKRecord.ID(recordName: appleUserID)
+        do {
+            try await database.deleteRecord(withID: recordID)
+            Log.cloudKit.info("UserRecord deleted from CloudKit")
+        } catch let ckError as CKError where ckError.code == .unknownItem {
+            // Record never existed or was already deleted — treat as success.
+        } catch {
+            Log.cloudKit.error("Failed to delete UserRecord: \(error.localizedDescription, privacy: .public)")
+        }
+    }
+
     // MARK: - Retry
 
     /// Runs `operation` and retries on transient CloudKit errors with
